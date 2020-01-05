@@ -15,6 +15,9 @@ public class CheckerBoard {
     // get a particular square from the board
     public BoardSquare getBoardSquare(int xCoordinate, int yCoordinate){
 
+        if(xCoordinate > 7 || yCoordinate > 7 || xCoordinate < 0 || yCoordinate < 0)
+            return null;
+
         return boardSquares[xCoordinate][yCoordinate];
 
     }

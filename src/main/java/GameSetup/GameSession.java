@@ -8,6 +8,7 @@ public class GameSession {
     private int teamTwoPieces;
     private CheckerPiece currentSelected;
     private String errorMessage;
+    private int totalMoves;
 
     public GameSession(){
 
@@ -23,6 +24,8 @@ public class GameSession {
 
         // Initialize the error message
         errorMessage = "";
+
+        totalMoves = 0;
 
         //intialize all board squares to null
         for(int i = 0; i < checkerBoard.getBoardSquares().length; i++){
@@ -120,6 +123,14 @@ public class GameSession {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public int getTotalMoves() {
+        return totalMoves;
+    }
+
+    public void setTotalMoves(int totalMoves) {
+        this.totalMoves = totalMoves;
     }
 
 }

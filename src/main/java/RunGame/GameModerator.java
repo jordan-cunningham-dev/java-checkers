@@ -62,6 +62,8 @@ public class GameModerator {
 
         GameSession gameSession = GameStart.getGameSession();
 
+        gameSession.setTotalMoves(0);
+
         // User is moving one square only...
         if((Math.abs(startCoordinates.getxCoordinate() - endCoordinates.getxCoordinate())) == 1){
 
@@ -104,7 +106,10 @@ public class GameModerator {
 
                 gameSession.setCurrentSelected(null);
                 gameSession.setErrorMessage("");
-                gameSession.switchTeam();
+
+
+                if(!hasAvailablePiecesToTake(endCoordinates))
+                    gameSession.switchTeam();
 
             }
             else{
@@ -270,6 +275,173 @@ public class GameModerator {
             pieceToBeTakenCoordinates.setyCoordinate(endCoordinates.getyCoordinate() + 1);
 
         return pieceToBeTakenCoordinates;
+
+    }
+
+    public static void validateEndTurn(){
+
+        //TODO: add end turn validation
+
+        System.out.println("Validating end turn attempt...");
+
+        GameSession gameSession = GameStart.getGameSession();
+
+        gameSession.setCurrentSelected(null);
+        gameSession.setErrorMessage("");
+
+        gameSession.switchTeam();
+
+        BoardGraphic.checkersInterface.repaint();
+
+
+    }
+
+    // returns true if there are enemy pieces available to be taken near an input piece
+    public static boolean hasAvailablePiecesToTake(Coordinates coordinates){
+
+        GameSession gameSession = GameStart.getGameSession();
+
+        /*
+        This is so ugly lmao...I feel like I have to explain it
+
+        This basically verifies 3 things:
+        1) The square in direction (x,y) is not empty and
+        2) has an enemy piece in it and
+        3) the "next" square after it is empty
+
+        so basically after a piece is taken, if the current piece's adjacent squares contain enemy pieces and an available
+        space after the enemy piece, then there is potential for a double jump, triple jump, whatever
+
+         */
+        if(gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 1, coordinates.getyCoordinate() - 1) != null
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 1, coordinates.getyCoordinate() - 1).getPiece() != null
+        && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 1, coordinates.getyCoordinate() - 1).getPiece().getTeam() !=
+        gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate()).getPiece().getTeam()
+        && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 2, coordinates.getyCoordinate() - 2).getPiece() == null) {
+
+            System.out.println("Returned true on x - 1, y - 1");
+            System.out.println("X coordinate: " + coordinates.getxCoordinate());
+            System.out.println("Y coordinate: " + coordinates.getyCoordinate());
+            System.out.println("Current piece team is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate()).getPiece().getTeam());
+            System.out.println("x - 1, y - 1 team is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 1, coordinates.getyCoordinate() - 1).getPiece().getTeam());
+            System.out.println("x - 2, y - 2 is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 2, coordinates.getyCoordinate() - 2).getPiece());
+
+            return true;
+        }
+
+        else if(gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate() - 1) != null
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate() - 1).getPiece() != null
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate() - 1).getPiece().getTeam() !=
+                gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate()).getPiece().getTeam()
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate() - 2).getPiece() == null) {
+
+            System.out.println("Returned true on x0, y - 1");
+            System.out.println("X coordinate: " + coordinates.getxCoordinate());
+            System.out.println("Y coordinate: " + coordinates.getyCoordinate());
+            System.out.println("Current piece team is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate()).getPiece().getTeam());
+            System.out.println("x0, y - 1 team is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate() - 1).getPiece().getTeam());
+            System.out.println("x0, y - 2 is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate() - 2).getPiece());
+
+            return true;
+        }
+
+        else if(gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 1, coordinates.getyCoordinate() - 1) != null
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 1, coordinates.getyCoordinate() - 1).getPiece() != null
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 1, coordinates.getyCoordinate() - 1).getPiece().getTeam() !=
+                gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate()).getPiece().getTeam()
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 2, coordinates.getyCoordinate() - 2).getPiece() == null) {
+
+            System.out.println("Returned true on x + 1, y - 1");
+            System.out.println("X coordinate: " + coordinates.getxCoordinate());
+            System.out.println("Y coordinate: " + coordinates.getyCoordinate());
+            System.out.println("Current piece team is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate()).getPiece().getTeam());
+            System.out.println("x + 1, y - 1 team is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 1, coordinates.getyCoordinate() - 1).getPiece().getTeam());
+            System.out.println("x + 2, y - 2 is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 2, coordinates.getyCoordinate() - 2).getPiece());
+
+            return true;
+        }
+
+        else if(gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 1, coordinates.getyCoordinate()) != null
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 1, coordinates.getyCoordinate()).getPiece() != null
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 1, coordinates.getyCoordinate()).getPiece().getTeam() !=
+                gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate()).getPiece().getTeam()
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 2, coordinates.getyCoordinate()).getPiece() == null) {
+
+            System.out.println("Returned true on x + 1, y0");
+            System.out.println("X coordinate: " + coordinates.getxCoordinate());
+            System.out.println("Y coordinate: " + coordinates.getyCoordinate());
+            System.out.println("Current piece team is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate()).getPiece().getTeam());
+            System.out.println("x + 1, y0 team is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 1, coordinates.getyCoordinate()).getPiece().getTeam());
+            System.out.println("x + 2, y0 is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 2, coordinates.getyCoordinate()).getPiece());
+
+            return true;
+        }
+
+        else if(gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 1, coordinates.getyCoordinate() + 1) != null
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 1, coordinates.getyCoordinate() + 1).getPiece() != null
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 1, coordinates.getyCoordinate() + 1).getPiece().getTeam() !=
+                gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate()).getPiece().getTeam()
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 2, coordinates.getyCoordinate() + 2).getPiece() == null) {
+
+            System.out.println("Returned true on x + 1, y + 1");
+            System.out.println("X coordinate: " + coordinates.getxCoordinate());
+            System.out.println("Y coordinate: " + coordinates.getyCoordinate());
+            System.out.println("Current piece team is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate()).getPiece().getTeam());
+            System.out.println("x + 1, y + 1 team is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 1, coordinates.getyCoordinate() + 1).getPiece().getTeam());
+            System.out.println("x + 2, y + 2 is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() + 2, coordinates.getyCoordinate() + 2).getPiece());
+
+            return true;
+        }
+
+        else if(gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate() + 1) != null
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate() + 1).getPiece() != null
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate() + 1).getPiece().getTeam() !=
+                gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate()).getPiece().getTeam()
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate() + 2).getPiece() == null) {
+
+            System.out.println("Returned true on x0, y + 1");
+            System.out.println("X coordinate: " + coordinates.getxCoordinate());
+            System.out.println("Y coordinate: " + coordinates.getyCoordinate());
+            System.out.println("Current piece team is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate()).getPiece().getTeam());
+            System.out.println("x0, y + 1 team is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate() + 1).getPiece().getTeam());
+            System.out.println("x0, y + 2 is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate() + 2).getPiece());
+
+            return true;
+        }
+
+        else if(gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 1, coordinates.getyCoordinate() + 1) != null
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 1, coordinates.getyCoordinate() + 1).getPiece() != null
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 1, coordinates.getyCoordinate() + 1).getPiece().getTeam() !=
+                gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate()).getPiece().getTeam()
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 2, coordinates.getyCoordinate() + 2).getPiece() == null) {
+
+            System.out.println("Returned true on x - 1, y + 1");
+            System.out.println("X coordinate: " + coordinates.getxCoordinate());
+            System.out.println("Y coordinate: " + coordinates.getyCoordinate());
+            System.out.println("Current piece team is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate()).getPiece().getTeam());
+            System.out.println("x - 1, y + 1 team is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 1, coordinates.getyCoordinate() + 1).getPiece().getTeam());
+            System.out.println("x - 2, y + 2 is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 2, coordinates.getyCoordinate() + 2).getPiece());
+
+            return true;
+        }
+
+        else if(gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 1, coordinates.getyCoordinate()) != null
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 1, coordinates.getyCoordinate()).getPiece() != null
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 1, coordinates.getyCoordinate()).getPiece().getTeam() !=
+                gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate()).getPiece().getTeam()
+                && gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 2, coordinates.getyCoordinate()).getPiece() == null) {
+
+            System.out.println("Returned true on x - 1, y0");
+            System.out.println("X coordinate: " + coordinates.getxCoordinate());
+            System.out.println("Y coordinate: " + coordinates.getyCoordinate());
+            System.out.println("Current piece team is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate(), coordinates.getyCoordinate()).getPiece().getTeam());
+            System.out.println("x - 1, y0 team is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 1, coordinates.getyCoordinate()).getPiece().getTeam());
+            System.out.println("x - 2, y0 is: " + gameSession.getCheckerBoard().getBoardSquare(coordinates.getxCoordinate() - 2, coordinates.getyCoordinate()).getPiece());
+
+            return true;
+        }
+
+        return false;
 
     }
 

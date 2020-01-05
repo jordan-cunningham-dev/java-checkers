@@ -5,6 +5,7 @@ import RunGame.GameModerator;
 import RunGame.GameStart;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -22,6 +23,8 @@ public class BoardGraphic {
         checkersInterface = new JFrame();
 
         checkersInterface.setSize(700, 600);
+
+        addEndTurnButton();
 
         setupMouseListener();
 
@@ -66,6 +69,25 @@ public class BoardGraphic {
 
             }
         });
+
+    }
+
+    private void addEndTurnButton(){
+
+        Button endTurnButton = new Button("End Turn");
+
+        endTurnButton.setBounds(510, 235, 100, 25);
+
+        endTurnButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                GameModerator.validateEndTurn();
+
+            }
+        });
+
+        checkersInterface.add(endTurnButton);
 
     }
 
