@@ -142,7 +142,7 @@ public class BadGraphics extends JPanel{
                     if(checkerBoard.getBoardSquare(i, j).getPiece().getTeam() == CheckerPiece.Team.TEAM_ONE)
                         graphics.setColor(Color.RED);
                     else
-                        graphics.setColor(Color.BLUE);
+                        graphics.setColor(Color.BLACK);
 
                     graphics.fillOval((i+1) * 50 + 2, (j+1) * 50 + 2, 45, 45);
 
@@ -150,7 +150,7 @@ public class BadGraphics extends JPanel{
 
                 if(checkerBoard.getBoardSquare(i, j).getPiece() != null && gameSession.getCurrentSelected() != null && checkerBoard.getBoardSquare(i, j).getPiece().equals(gameSession.getCurrentSelected())){
 
-                    graphics.setColor(Color.magenta);
+                    graphics.setColor(Color.GREEN);
                     graphics.fillOval((i+1) * 50 + 2, (j+1) * 50 + 2, 45, 45);
 
                 }
